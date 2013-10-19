@@ -1,31 +1,12 @@
-;(function($, window, document, undefined) {
+; (function ($, window, document) {
 
-  var pluginName = 'scrollstack',
-    currentScroll = $(window).scrollTop()
-    defaults = {
-      stack: [],
-      up: false,
-      duration: 500,
-      easing: 'swing',
-    };
-
-  /*
-   * Sets up the necessary listeners for scrolling and clicking
-   */
-  function Plugin(element, options) {
-    this.options = $.extend({}, defaults, options);
-    var that = this;
-
-    // Update current position on scroll
-    $(document).scroll(function (e) {
-      currentScroll = $(window).scrollTop()
-    });
-
-    element.click(function (e) {
-      animateScroll(getNextScrollPosition(that.options.stack, that.options.up), that.options.duration, that.options.easing);
-      e.preventDefault();
-    });
-  }
+  var currentScroll = $(window).scrollTop(),
+      defaults = {
+        stack: [],
+        up: false,
+        duration: 500,
+        easing: 'swing'
+      };
 
   /*
    * Returns the Y-position of the next element on the stack.
@@ -33,26 +14,28 @@
    * direction_up is set to true, it is the previous element.
    */
   function getNextScrollPosition(targets, direction_up) {
-    var targetScroll;
+    var targetScroll,
+        i;
 
     // UP
     if (direction_up) {
-      for (var i = targets.length - 1; i >= 0; i--) {
+      for (i = targets.length - 1; i >= 0; i--) {
         targetScroll = $(targets[i]).offset().top;
-        if(targetScroll < currentScroll)
+        if (targetScroll < currentScroll) {
           return targetScroll;
+        }
       }
       return 0;
+    }
 
     // DOWN
-    } else {
-      for (var i = 0; i <= targets.length - 1; i++) {
-        targetScroll = $(targets[i]).offset().top;
-        if(targetScroll > currentScroll)
-          return targetScroll;
+    for (i = 0; i <= targets.length - 1; i++) {
+      targetScroll = $(targets[i]).offset().top;
+      if (targetScroll > currentScroll) {
+        return targetScroll;
       }
-      return $(document).height();
     }
+    return $(document).height();
   }
 
   /*
@@ -63,7 +46,25 @@
   function animateScroll (position, duration, easing) {
     $('html, body').animate({
       scrollTop: position
-    }, duration, easing)
+    }, duration, easing);
+  }
+
+  /*
+   * Sets up the necessary listeners for scrolling and clicking
+   */
+  function Plugin(element, options) {
+    this.options = $.extend({}, defaults, options);
+    var that = this;
+
+    // Update current position on scroll
+    $(document).scroll(function () {
+      currentScroll = $(window).scrollTop();
+    });
+
+    element.click(function (e) {
+      animateScroll(getNextScrollPosition(that.options.stack, that.options.up), that.options.duration, that.options.easing);
+      e.preventDefault();
+    });
   }
 
 
