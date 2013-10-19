@@ -43,9 +43,10 @@
    * The duration and the easing of the animation
    * have to be specified.
    */
-  function animateScroll (position, duration, easing) {
+  function animateScroll (position, duration, easing, direction_up) {
+    var fix = direction_up ? -1 : 1; // some browsers have an inaccuracy of .5 pixels
     $('html, body').animate({
-      scrollTop: position
+      scrollTop: position + fix
     }, duration, easing);
   }
 
@@ -62,7 +63,10 @@
     });
 
     element.click(function (e) {
-      animateScroll(getNextScrollPosition(that.options.stack, that.options.up), that.options.duration, that.options.easing);
+      animateScroll(  getNextScrollPosition(that.options.stack, that.options.up),
+                      that.options.duration,
+                      that.options.easing,
+                      that.options.up);
       e.preventDefault();
     });
   }
